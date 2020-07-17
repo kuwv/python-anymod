@@ -12,11 +12,9 @@ else:
 
 @task
 def format(ctx, check=False):
-    '''Format project source code to PEP-8 standard
+    '''Format project source code to PEP-8 standard.
 
-    Parameters
-    ----------
-    check: bool, optional
+    :param check: bool, optional
         Check project source code without modification
     '''
     args = ['--skip-string-normalization']
@@ -34,11 +32,9 @@ def lint(ctx):
 
 @task
 def type_check(ctx, path='.'):
-    '''Check project source types
+    '''Check project source types.
 
-    Parameters
-    ----------
-    path: str, optional
+    :param path: str, optional
         Include the path to check for type-hints
     '''
     ctx.run("mypy {}".format(path))
@@ -46,6 +42,7 @@ def type_check(ctx, path='.'):
 
 @task
 def unit_test(ctx, capture=None):
+    '''Perform unit tests.'''
     args = []
     if capture:
         args.append('--capture=' + capture)

@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "python-proman-loader"
+name = "python-anymod"
 version = "0.1.0"
-description = "Dynamic module loader"
+description = "AnyMod - Dynamic module loader"
 authors = ["Jesse P. Johnson <jpj6652@gmail.com>"]
 license = "Apache-2.0"
 
