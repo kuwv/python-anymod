@@ -49,7 +49,7 @@ def unit_test(ctx, capture=None):
 
 
 @task
-def safety(ctx):
+def static_analysis(ctx):
     '''Perform static code analysis on imports.'''
     ctx.run('safety check')
 
