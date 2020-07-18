@@ -57,7 +57,7 @@ def safety(ctx):
 @task
 def coverage(ctx, report=None):
     '''Perform coverage checks for tests.'''
-    args = ['--cov=compendium']
+    args = ['--cov=anymod']
     if report:
         args.append('--cov-report={}'.format(report))
     ctx.run("pytest {} ./tests/".format(' '.join(args)))
@@ -130,6 +130,6 @@ def clean(ctx):
     paths = ['dist', 'logs']
     paths.append('**/__pycache__')
     paths.append('**/*.pyc')
-    paths.append('compendium.egg-info')
+    paths.append('anymod.egg-info')
     for path in paths:
         ctx.run("rm -rf {}".format(path))
