@@ -1,7 +1,6 @@
+'''Test Task-Runner.'''
 from invoke import call, task  # type: ignore
-
-
-from compendium import __version__
+from anymod import __version__
 
 
 if 'dev' in __version__ or 'rc' in __version__:
@@ -21,12 +20,12 @@ def format(ctx, check=False):
     if check:
         args.append('--check')
     ctx.run('isort --atomic **/*.py')
-    ctx.run("black **/*.py {}".format(' '.join(args)))
+    # ctx.run("black **/*.py {}".format(' '.join(args)))
 
 
 @task
 def lint(ctx):
-    '''Check project source code for linting errors'''
+    '''Check project source code for linting errors.'''
     ctx.run('flake8')
 
 
@@ -51,11 +50,13 @@ def unit_test(ctx, capture=None):
 
 @task
 def safety(ctx):
+    '''Perform static code analysis on imports.'''
     ctx.run('safety check')
 
 
 @task
 def coverage(ctx, report=None):
+    '''Perform coverage checks for tests.'''
     args = ['--cov=compendium']
     if report:
         args.append('--cov-report={}'.format(report))
@@ -64,11 +65,13 @@ def coverage(ctx, report=None):
 
 @task(pre=[format, lint, unit_test, safety, coverage])
 def test(ctx):
+    '''Run all tests.'''
     pass
 
 
 @task
 def build(ctx, format=None):
+    '''Build wheel package.'''
     if format:
         ctx.run("flit build --format={}".format(format))
     else:
@@ -77,27 +80,27 @@ def build(ctx, format=None):
 
 @task(pre=[call(build, format='wheel')])
 def dev(ctx):
+    '''Perform development runtime environment setup.'''
     ctx.run('flit install --symlink --python python3')
 
 
 @task
 def install(ctx, symlink=True):
+    '''Install in development environment.'''
     ctx.run('flit install -s')
 
 
 @task
 def version(ctx, part=part, tag=False, commit=False, message=None):
-    '''Update project version and apply tags
+    '''Update project version and apply tags.
 
-    Parameters
-    ----------
-    tag: bool, optional
+    :param tag: bool, optional
         Apply tag to branch using version
 
-    commit: bool, optional
+    :param commit: bool, optional
         Commit version to branch
 
-    message: str, optional
+    :param message: str, optional
         Add commit message with annotated tag
     '''
     args = [part]
@@ -117,13 +120,13 @@ def version(ctx, part=part, tag=False, commit=False, message=None):
 
 @task
 def publish(ctx):
-    '''Publish project distribution'''
+    '''Publish project distribution.'''
     ctx.run('flit publish')
 
 
 @task
 def clean(ctx):
-    '''Clean project dependencies and build'''
+    '''Clean project dependencies and build.'''
     paths = ['dist', 'logs']
     paths.append('**/__pycache__')
     paths.append('**/*.pyc')

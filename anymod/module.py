@@ -1,14 +1,13 @@
 '''Control management of modules dynamically.'''
+import importlib
 # -*- coding: utf-8 -*-
 import inspect
-import importlib
 import logging
 import pkgutil
-import pkg_resources
-import re
 import sys
-
 from typing import Optional
+
+import pkg_resources
 
 # Current OS Platform filetypes
 FILETYPES = [
@@ -20,11 +19,6 @@ FILETYPES = [
 ]
 
 
-# TODO: should load from pkgutil
-# https://packaging.python.org/guides/creating-and-discovering-plugins/
-# pluginbase +1
-# stevedore -1 only 2.7 and 3.5 ?!?
-# importlib +1
 class ModuleLoader:
     '''Load modules dynamically.'''
 
@@ -53,8 +47,7 @@ class ModuleLoader:
             for entry_point in pkg_resources.iter_entry_points(entry)
         }
 
-    @staticmethod
-    def __mod_path(path: str, name: str, **kwargs):
+    def __mod_path(self, path: str, name: str, **kwargs):
         '''Modify paths.'''
         # TODO: Add exclusions, os.path.relpath
         module = kwargs.get('module', None)
@@ -62,7 +55,7 @@ class ModuleLoader:
 
         module_path = path.replace('/', '.') + '.' + name
         if module and subclass:
-            module_path = self.retrieve_subclass(module, subclass) 
+            module_path = self.retrieve_subclass(module, subclass)
         return module_path
 
     def list_modules(self, **kwargs):
