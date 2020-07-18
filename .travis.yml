@@ -21,7 +21,7 @@ jobs:
     - stage: test
       script: inv format --check
     - script: inv lint
-    - script: inv unit-test
+    # - script: inv unit-test
     - script: inv safety
 
     - stage: deploy
