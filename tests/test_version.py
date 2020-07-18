@@ -1,4 +1,4 @@
-from compendium import __version__
+from anymod import __version__
 
 
 def test_version():
