@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "python-anymod"
+name = "anymod"
 version = "0.1.1-dev3"
 description = "AnyMod - Dynamic module loader"
 authors = ["Jesse P. Johnson <jpj6652@gmail.com>"]
