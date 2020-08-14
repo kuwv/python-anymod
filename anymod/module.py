@@ -71,7 +71,7 @@ class ModuleLoader:
     def discover_module_path(self, module):
         '''Retrieve module path with matching prefix.'''
         # TODO: add try / catch
-        return [x for x in self.list_modules() if (module in x)][0]
+        return next((x for x in self.list_modules() if (module in x)), [])
 
     def retrieve_subclass(self, module: str, subclass: object):
         '''Retrieve subclass from module'''

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "anymod"
-version = "0.1.1-dev3"
+version = "0.1.1-dev5"
 description = "AnyMod - Dynamic module loader"
 authors = ["Jesse P. Johnson <jpj6652@gmail.com>"]
 license = "Apache-2.0"
@@ -23,6 +23,7 @@ pyfakefs = "^4.1.0"
 mkdocstrings = "^0.12.1"
 black = "^19.10b0"
 mypy = "^0.782"
+bandit = "^1.6.2"
 
 [tool.flit.metadata]
 module = "anymod"
