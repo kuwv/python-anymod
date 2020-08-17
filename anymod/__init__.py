@@ -5,7 +5,7 @@
 
 __author__ = 'Jesse P. Johnson'
 __title__ = 'anymod'
-__version__ = '0.1.1-dev5'
+__version__ = '0.1.1-dev6'
 __license__ = 'Apache-2.0'
 
 __all__ = ['ModuleLoader']
