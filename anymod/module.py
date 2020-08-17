@@ -1,8 +1,12 @@
-'''Control management of modules dynamically.'''
-import importlib
 # -*- coding: utf-8 -*-
+# copyright: (c) 2020 by Jesse Johnson.
+# license: Apache 2.0, see LICENSE for more details.
+'''Control management of modules dynamically.'''
+
+import importlib
 import inspect
 import logging
+import os
 import pkgutil
 import sys
 from typing import Optional
@@ -29,6 +33,12 @@ class ModuleLoader:
         '''Initialize module search paths.'''
         self.__path = path
         self.__prefix = prefix
+        (self.add_module_path(p) for p in self.__path)
+
+    @staticmethod
+    def add_module_path(path: str):
+        '''Add module path to Python.'''
+        sys.path.append(os.path.dirname(path))
 
     @staticmethod
     def discover_plugins(module_prefix: str):
@@ -48,7 +58,7 @@ class ModuleLoader:
         }
 
     def __mod_path(self, path: str, name: str, **kwargs):
-        '''Modify paths.'''
+        '''Module paths.'''
         # TODO: Add exclusions, os.path.relpath
         module = kwargs.get('module', None)
         subclass = kwargs.get('subclass', None)
