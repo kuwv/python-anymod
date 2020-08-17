@@ -1,4 +1,5 @@
 import os
+
 from anymod import ModuleLoader
 from tests.modules.base.example_base import ExampleBase
 
@@ -26,7 +27,9 @@ def test_class_load():
     assert module_path == 'tests.modules.module_class'
 
     module = mod.retrieve_subclass(module_path, ExampleBase)
-    example_class = mod.load_classpath(module.__module__ + '.' + module.__name__)
+    example_class = mod.load_classpath(
+        module.__module__ + '.' + module.__name__
+    )
     example = example_class()
     key = example.method1()
     assert key == 'value'

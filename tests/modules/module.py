@@ -1,5 +1,6 @@
 '''Example class to test loading.'''
 
+
 class Test:
     '''Test class.'''
 
