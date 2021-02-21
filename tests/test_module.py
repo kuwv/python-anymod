@@ -10,26 +10,28 @@ toml_path = config_path + '/settings.toml'
 print(config_path)
 print('relative', os.path.relpath(__file__, '.'))
 
-mod = ModuleLoader(['tests/mock_module'])
+loader = ModuleLoader(['tests/mock_module'])
 
 
 def test_module_discovery():
     '''Dynamically load the appropriate module.'''
-    assert mod.list_modules() == [
+    print(loader.list_modules())
+    assert loader.list_modules() == [
+        'tests.mock_module.base',
         'tests.mock_module.module',
         'tests.mock_module.module_class',
     ]
-    module_path = mod.discover_module_path('module')
+    module_path = loader.discover_module_path('module')
     assert module_path == 'tests.mock_module.module'
 
 
 def test_class_load():
     '''Test loading classes.'''
-    module_path = mod.discover_module_path('module_class')
+    module_path = loader.discover_module_path('module_class')
     assert module_path == 'tests.mock_module.module_class'
 
-    module = mod.retrieve_subclass(module_path, ExampleBase)
-    example_class = mod.load_classpath(
+    module = loader.retrieve_subclass(module_path, ExampleBase)
+    example_class = loader.load_classpath(
         module.__module__ + '.' + module.__name__
     )
     example = example_class()
