@@ -1,3 +1,4 @@
+# type: ignore
 '''Example class to test loading.'''
 from .base.example_base import ExampleBase
 

@@ -26,6 +26,7 @@ black = "^19.10b0"
 mypy = "^0.782"
 bandit = "^1.6.2"
 safety = "^1.9.0"
+wheel = "^0.36.2"
 
 [tool.flit.metadata]
 module = "anymod"

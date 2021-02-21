@@ -1,3 +1,4 @@
+# type: ignore
 '''Example class to test loading.'''
 
 

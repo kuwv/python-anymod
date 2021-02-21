@@ -1,3 +1,4 @@
+# type: ignore
 from anymod import __version__
 
 
