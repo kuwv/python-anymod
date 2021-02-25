@@ -6,7 +6,7 @@
 
 from invoke import task
 
-from anymod.__version__ import __version__
+from anymod import __version__
 
 if 'dev' in __version__ or 'rc' in __version__:
     part = 'build'
