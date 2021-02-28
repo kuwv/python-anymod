@@ -18,8 +18,7 @@ install:
 jobs:
   fast_finish: true
   include:
-    - stage: test
-      script: inv qa.format --check
+    - script: inv qa.autoformat
     - script: inv qa.lint
     - script: inv qa.unit-test
     - script: inv qa.static-analysis
