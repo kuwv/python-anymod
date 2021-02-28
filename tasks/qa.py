@@ -8,7 +8,7 @@ from invoke import task
 
 
 @task
-def autoformat(ctx, check=True):
+def style(ctx, check=True):
     '''Format project source code to PEP-8 standard.'''
     args = ['--skip-string-normalization']
     if check:

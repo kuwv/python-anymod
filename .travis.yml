@@ -18,7 +18,7 @@ install:
 jobs:
   fast_finish: true
   include:
-    - script: inv qa.autoformat
+    - script: inv qa.style
     - script: inv qa.lint
     - script: inv qa.unit-test
     - script: inv qa.static-analysis
