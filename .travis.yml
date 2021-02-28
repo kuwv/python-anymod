@@ -35,5 +35,5 @@ jobs:
 
     - stage: coverage
       script:
-        - inv coverage --report=xml
+        - inv qa.coverage --report=xml
         - bash <(curl -s https://codecov.io/bash)
