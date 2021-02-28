@@ -13,12 +13,7 @@ from anymod import PluginLoader  # , util
 # config_path = os.path.dirname(os.path.realpath(__file__))
 # toml_path = os.path.join(config_path, 'settings.toml')
 print(sys.path)
-mock_path = os.path.join(
-    os.path.dirname(__file__),
-    # 'tests',
-    'mock_module',
-    'mock_module',
-)
+mock_path = os.path.join(os.path.dirname(__file__), 'mock_module')
 loader = PluginLoader([mock_path])
 
 
@@ -37,10 +32,10 @@ def test_entry_point(setup_mock_modules):
     assert entry_test.key == 'value'
 
 
-def test_discover_plugins(setup_mock_modules):
+def test_load_modules(setup_mock_modules):
     # mock_module = importlib.import_module('mock_module')
     # util.reload_module(mock_module)
-    plugins = loader.discover_plugins(prefix_include='mock')
+    plugins = loader.load_modules(prefix_include='mock')
     print(type(plugins))
 
 
@@ -68,15 +63,31 @@ def test_discover_entry_points(setup_mock_modules):
 #     # print(mock_module.__dict__)
 
 
-def test_discover_module_path():
-    '''Dynamically load the appropriate module.'''
-    # print(sys.meta_path)
-    module = [
-        {'finder': finder, 'name': name, 'ispkg': ispkg}
-        for finder, name, ispkg in pkgutil.iter_modules(
-            [mock_path], prefix='mock'
-        )
+def test_dynamic_list_local_module():
+    assert loader.list_imports() == [
+        'mock_module.example_base',
+        'mock_module.module',
+        'mock_module.module_class',
+        'mock_module.nested1.module1',
+        'mock_module.nested1.nested2.module2',
     ]
+    module_path = loader.get_import_path('module', mock_path)
+    assert module_path == 'mock_module.module'
+
+    EntryTest = loader.load_classpath(
+        "{m}.{c}".format(m=module_path, c='EntryTest')
+    )
+
+    module = loader.find_packages()
+    #     prefix='p_',
+    #     prefix_include='',
+    #     # prefix_exclude='p_',
+    # )
+
+    # print(module)
+    # if module != []:
+    #     sys.path.append(module[0]['finder'].path)
+
     sys.path.append(module[0]['finder'].path)
     from mock_module.module import EntryTest
 
@@ -85,44 +96,18 @@ def test_discover_module_path():
     assert entry_test.key == 'value'
 
 
-def test_dynamic_list_local_module():
-    # assert loader.list_modules() == [
-    #     'mock_module.example_base',
-    #     'mock_module.module',
-    #     'mock_module.module_class',
-    # ]
-    # module_path = loader.discover_module_path('module')
-    # print(module_path)
-    # assert module_path == 'mock_module.module'
-
-    # EntryTest = loader.load_classpath(
-    #     "{m}.{c}".format(m=module_path, c='EntryTest')
-    # )
-
-    module = loader.discover_modules(
-        prefix='p_',
-        prefix_include='',
-        # prefix_exclude='p_',
-    )
-
-    print(module)
-    if module != []:
-        sys.path.append(module[0]['finder'].path)
-
-
 def test_class_load(setup_mock_modules):
     '''Test loading classes.'''
-    pass
-    # from mock_module.example_base import ExampleBase
-    # assert 'mock_module.example_base' in sys.modules
+    from mock_module.example_base import ExampleBase
+    assert 'mock_module.example_base' in sys.modules
 
-    # module_path = loader.discover_module_path('module_class')
-    # assert module_path == 'mock_module.module_class'
+    module_path = loader.get_import_path('module_class', mock_path)
+    assert module_path == 'mock_module.module_class'
 
-    # module = loader.retrieve_subclass(module_path, ExampleBase)
-    # example_class = loader.load_classpath(
-    #     "{m}.{n}".format(m=module.__module__, n=module.__name__)
-    # )
-    # example = example_class()
-    # key = example.method1()
-    # assert key == 'value'
+    module = loader.retrieve_subclass(module_path, ExampleBase)
+    example_class = loader.load_classpath(
+        "{m}.{n}".format(m=module.__module__, n=module.__name__)
+    )
+    example = example_class()
+    key = example.method1()
+    assert key == 'value'

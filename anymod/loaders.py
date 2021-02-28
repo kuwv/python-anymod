@@ -6,12 +6,12 @@
 import importlib
 import inspect
 import logging
-# import os
+import os
 import pkgutil
 import sys
-from importlib.machinery import FileFinder
+# from importlib.machinery import FileFinder
 from types import ModuleType
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 import pkg_resources
 
@@ -21,9 +21,16 @@ log = logging.getLogger(__name__)
 
 
 class PluginLoader:
-    '''Load plugin modules dynamically.'''
+    '''Load plugin modules dynamically.
 
-    __module_path = None
+    Overall tasks
+    - Find packages / modules
+    - Load packages / modules
+    - Import objects
+
+    '''
+
+    # __module_path = None
     # __loader = None
 
     def __init__(
@@ -56,40 +63,19 @@ class PluginLoader:
                 if p not in sys.path:
                     util.add_module_path(p)
 
-    @staticmethod
-    def discover_plugins(
-        paths: Union[List[str], str] = [],
-        prefix: str = '',
-        prefix_include: str = '',
-        # prefix_exclude: str = '',
-    ) -> List[ModuleType]:
-        '''Retrieve list of modules matching prefix.
-
-        Parameters
-        ----------
-        prefix_include: str
-            Module prefix used to limit scope of search for modules.
-
-        '''
-        return [
-            importlib.import_module(name)
-            for finder, name, ispkg in pkgutil.iter_modules(
-                path=paths, prefix=prefix
-            )
-            if name.startswith(prefix_include)
-        ]
-
-    def discover_modules(
+    def find_packages(
         self,
         paths: List[str] = [],
         prefix: str = '',
         prefix_include: str = '',
         # prefix_exclude: str = '',
-    ) -> List[Dict[str, Union[str, FileFinder, bool]]]:
+    ) -> List[Dict[str, Any]]:
         '''Retrieve list of modules matching prefix.
 
         Parameters
         ----------
+        paths: list
+            Paths to narrow search for plugins/modules.
         prefix: str
             Prefix to prepend to module imports.
         prefix_include: str
@@ -98,14 +84,123 @@ class PluginLoader:
         '''
         paths = paths if paths != [] else self.__paths
         prefix = prefix or self.__module_prefix
-        module = [
+        modules = [
             {'name': name, 'ispkg': ispkg, 'finder': finder}
             for finder, name, ispkg in pkgutil.iter_modules(
                 path=paths, prefix=prefix
             )
             if name.startswith(prefix_include)
         ]
-        return module
+        return modules
+
+    def load_modules(
+        self,
+        paths: List[str] = [],
+        prefix: str = '',
+        prefix_include: str = '',
+        # prefix_exclude: str = '',
+    ) -> List[ModuleType]:
+        '''Load list of modules matching prefix.
+
+        Parameters
+        ----------
+        prefix_include: str
+            Module prefix used to limit scope of search for modules.
+
+        '''
+        return [
+            importlib.import_module(x['name'])
+            for x in self.find_packages(
+                paths=paths, prefix=prefix, prefix_include=prefix_include
+            )
+        ]
+
+    def list_modules(
+        self,
+        paths: List[str] = [],
+        **kwargs: str,
+    ) -> List[Any]:
+        '''Retrieve list of modules from specified path with matching prefix.
+
+        Parameters
+        ----------
+        paths: list
+            List of paths to search for modules.
+
+        '''
+        modules = []
+        for x in self.find_packages(paths=paths, **kwargs):
+            if x['ispkg'] is False and not x['name'].startswith('_'):
+                modules.append(
+                    f"{os.path.join(x['finder'].path, x['name'])}.py"
+                )
+            else:
+                modules += self.list_modules(
+                    paths=[os.path.join(x['finder'].path, x['name'])],
+                    **kwargs,
+                )
+        return modules
+
+    def list_imports(
+        self,
+        base_path: Optional[str] = None,
+        paths: List[str] = [],
+        **kwargs: str,
+    ) -> List[Any]:
+        '''Retrieve list of modules from specified path with matching prefix.
+
+        Parameters
+        ----------
+        paths: list
+            List of paths to search for modules.
+
+        '''
+        modules = []
+        for x in self.find_packages(paths=paths, **kwargs):
+            # Determine module path
+            if base_path:
+                import_path = f"{base_path}.{x['name']}"
+            else:
+                import_path = x['name']
+
+            # Populate module list
+            if x['ispkg'] is False and not x['name'].startswith('_'):
+                modules.append(import_path)
+            else:
+                modules += self.list_imports(
+                    base_path=import_path,
+                    paths=[os.path.join(x['finder'].path, x['name'])],
+                    **kwargs,
+                )
+        return modules
+
+    def get_import_path(
+        self,
+        name: str,
+        path: str,
+        **kwargs: str,
+    ) -> Optional[str]:
+        '''Retrieve module path with matching prefix.
+
+        Parameters
+        ----------
+        name: str
+            Name of the module.
+        paths: str
+            Path to search for module.
+
+        '''
+        # TODO: add try / catch
+        result = next(
+            (
+                x
+                for x in self.list_imports(paths=[path], **kwargs)
+                if name == x.split('.')[-1]
+                # if name == x.split(os.sep)[-1].split('.')[0]
+            ),
+            None,
+        )
+        return result
 
     @staticmethod
     def discover_entry_points(
@@ -129,25 +224,30 @@ class PluginLoader:
 
     @staticmethod
     def retrieve_subclass(
-        module_name: str,
+        module_path: str,
         subclass: Any,
     ) -> Optional[str]:
-        '''Retrieve subclass from module
+        '''Retrieve subclass inherrited from abstract.
 
         Parameters
         ----------
-        module_name: str
+        module_path: str
             Name of the module to query for class objects.
         subclass: Any
             Subclass to query child types.
 
         '''
-        module_import = importlib.import_module(module_name, __name__)
+        # TODO: need to fix import_module check
+        print('...........', module_path, __name__)
+        # if module_path not in sys.modules:
+        module_import = importlib.import_module(
+            module_path, package=__name__
+        )
         for attribute_name in dir(module_import):
             attribute = getattr(module_import, attribute_name)
             if inspect.isclass(attribute) and issubclass(attribute, subclass):
                 if subclass.__name__ != attribute.__name__:
-                    setattr(sys.modules[__name__], module_name, attribute)
+                    setattr(sys.modules[__name__], module_path, attribute)
                     return attribute
         else:
             return None
@@ -170,87 +270,12 @@ class PluginLoader:
         logging.info("Loading class {}".format(classpath))
         try:
             module_path, class_name = classpath.rsplit('.', 1)
-            module = importlib.import_module(module_path, package)
+            # TODO: need to fix import_module check
+            print('........', module_path, package)
+            for x in sys.modules:
+                print(module_path, x)
+            if module_path not in sys.modules:
+                module = importlib.import_module(module_path, package=package)
         except ImportError:
             logging.error("Failed to load {}".format(class_name))
         return getattr(module, class_name)
-
-    def _get_import_path(
-        self,
-        name: str,
-        path: str,
-        module: Optional[str] = None,
-        subclass: Optional[str] = None,
-    ) -> str:
-        '''Module paths.
-
-        Parameters
-        ----------
-        name: str
-            Module name
-        path: str
-            Path to module
-        module: str, optional
-            Is this the same as the name of the module?
-        subclass: str, optional
-            Mixin / Baseclass that is inherrited
-
-        '''
-        # TODO: Add exclusions, os.path.relpath
-        module_path = "{p}.{n}".format(p=path, n=name)
-        if module is not None and subclass is not None:
-            module_path = self.retrieve_subclass(
-                module, subclass
-            )  # type: ignore
-        return module_path
-
-    def list_modules(
-        self,
-        prefix: str = '',
-        paths: List[str] = [],
-        **kwargs: str,
-    ) -> List:
-        '''Retrieve list of modules from specified path with matching prefix.
-
-        Parameters
-        ----------
-        paths: list
-            List of paths to search for modules.
-
-        '''
-        paths = paths if paths != [] else self.__paths
-        prefix = prefix if prefix != '' else self.__module_prefix
-        result = [
-            self._get_import_path(name, finder.path, **kwargs)
-            for finder, name, _ in pkgutil.iter_modules(
-                path=paths, prefix=prefix
-            )
-        ]
-        return result
-
-    def discover_module_path(
-        self,
-        name: str,
-        prefix: Optional[str] = None,
-        paths: List[str] = [],
-    ) -> Optional[str]:
-        '''Retrieve module path with matching prefix.
-
-        Parameters
-        ----------
-        name: str
-            Name of the module.
-        paths: str
-            Path to search for module.
-
-        '''
-        # TODO: add try / catch
-        result = next(
-            (
-                x
-                for x in self.list_modules(prefix, paths)
-                if name == x.split('.')[-1]
-            ),
-            None,
-        )
-        return result
