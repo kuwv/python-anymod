@@ -41,7 +41,7 @@ def unit_test(ctx, capture=None):
 @task
 def static_analysis(ctx):
     '''Perform static code analysis on imports.'''
-    ctx.run('safety check')
+    ctx.run('safety check --ignore=39462')
     ctx.run('bandit -r anymod')
 
 
