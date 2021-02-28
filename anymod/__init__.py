@@ -4,6 +4,7 @@
 '''Simple plugin management tool.'''
 
 import logging
+
 from .loaders import PluginLoader  # noqa
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())

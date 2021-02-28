@@ -9,6 +9,7 @@ import logging
 import os
 import pkgutil
 import sys
+
 # from importlib.machinery import FileFinder
 from types import ModuleType
 from typing import Any, Dict, List, Optional
@@ -34,10 +35,7 @@ class PluginLoader:
     # __loader = None
 
     def __init__(
-        self,
-        paths: list = [],
-        module_prefix: str = '',
-        **kwargs: str,
+        self, paths: list = [], module_prefix: str = '', **kwargs: str,
     ):
         '''Initialize module loader plugin system.
 
@@ -115,11 +113,7 @@ class PluginLoader:
             )
         ]
 
-    def list_modules(
-        self,
-        paths: List[str] = [],
-        **kwargs: str,
-    ) -> List[Any]:
+    def list_modules(self, paths: List[str] = [], **kwargs: str) -> List[Any]:
         '''Retrieve list of modules from specified path with matching prefix.
 
         Parameters
@@ -136,8 +130,7 @@ class PluginLoader:
                 )
             else:
                 modules += self.list_modules(
-                    paths=[os.path.join(x['finder'].path, x['name'])],
-                    **kwargs,
+                    paths=[os.path.join(x['finder'].path, x['name'])], **kwargs,
                 )
         return modules
 
@@ -175,10 +168,7 @@ class PluginLoader:
         return modules
 
     def get_import_path(
-        self,
-        name: str,
-        path: str,
-        **kwargs: str,
+        self, name: str, path: str, **kwargs: str,
     ) -> Optional[str]:
         '''Retrieve module path with matching prefix.
 
@@ -204,8 +194,7 @@ class PluginLoader:
 
     @staticmethod
     def discover_entry_points(
-        group: str,
-        name: Optional[str] = None,
+        group: str, name: Optional[str] = None,
     ) -> Dict[str, Any]:
         '''Retrieve entry points of module.
 
@@ -223,10 +212,7 @@ class PluginLoader:
         }
 
     @staticmethod
-    def retrieve_subclass(
-        module_path: str,
-        subclass: Any,
-    ) -> Optional[str]:
+    def retrieve_subclass(module_path: str, subclass: Any) -> Optional[str]:
         '''Retrieve subclass inherrited from abstract.
 
         Parameters
@@ -238,11 +224,8 @@ class PluginLoader:
 
         '''
         # TODO: need to fix import_module check
-        print('...........', module_path, __name__)
         # if module_path not in sys.modules:
-        module_import = importlib.import_module(
-            module_path, package=__name__
-        )
+        module_import = importlib.import_module(module_path, package=__name__)
         for attribute_name in dir(module_import):
             attribute = getattr(module_import, attribute_name)
             if inspect.isclass(attribute) and issubclass(attribute, subclass):
@@ -253,10 +236,7 @@ class PluginLoader:
             return None
 
     @staticmethod
-    def load_classpath(
-        classpath: str,
-        package: Optional[str] = None
-    ) -> str:
+    def load_classpath(classpath: str, package: Optional[str] = None) -> str:
         '''Load class from module.
 
         Parameters
@@ -271,11 +251,8 @@ class PluginLoader:
         try:
             module_path, class_name = classpath.rsplit('.', 1)
             # TODO: need to fix import_module check
-            print('........', module_path, package)
-            for x in sys.modules:
-                print(module_path, x)
-            if module_path not in sys.modules:
-                module = importlib.import_module(module_path, package=package)
+            # if module_path not in sys.modules:
+            module = importlib.import_module(module_path, package=package)
         except ImportError:
             logging.error("Failed to load {}".format(class_name))
         return getattr(module, class_name)

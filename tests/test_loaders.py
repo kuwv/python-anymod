@@ -1,6 +1,7 @@
 # type: ignore
 
 import inspect
+
 # import importlib
 import os
 import pkgutil
@@ -99,6 +100,7 @@ def test_dynamic_list_local_module():
 def test_class_load(setup_mock_modules):
     '''Test loading classes.'''
     from mock_module.example_base import ExampleBase
+
     assert 'mock_module.example_base' in sys.modules
 
     module_path = loader.get_import_path('module_class', mock_path)
