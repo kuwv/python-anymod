@@ -19,10 +19,10 @@ jobs:
   fast_finish: true
   include:
     - stage: test
-      script: inv format --check
-    - script: inv lint
-    # - script: inv unit-test
-    # - script: inv static-analysis
+      script: inv qa.format --check
+    - script: inv qa.lint
+    - script: inv qa.unit-test
+    - script: inv qa.static-analysis
 
     - stage: deploy
       script: poetry config pypi-token.pypi $PYPI_TOKEN
