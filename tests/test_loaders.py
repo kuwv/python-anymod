@@ -1,19 +1,17 @@
 # type: ignore
+'''Provide tests for loaders.'''
 
 import inspect
-
-# import importlib
 import os
 import pkgutil
 import sys
 
 import pkg_resources
 
-from anymod import PluginLoader  # , util
+from anymod import PluginLoader
 
 # config_path = os.path.dirname(os.path.realpath(__file__))
 # toml_path = os.path.join(config_path, 'settings.toml')
-print(sys.path)
 mock_path = os.path.join(os.path.dirname(__file__), 'mock_module')
 loader = PluginLoader([mock_path])
 
@@ -47,18 +45,17 @@ def test_discover_entry_points(setup_mock_modules):
     assert entry_test.key == 'value'
 
 
-# https://stackoverflow.com/questions/67631/how-to-import-a-module-given-the-full-path
+# https://stackoverflow.com/questions/67631
 # def test_spec_load(setup_mock_modules):
-#     abs_mock_path = os.path.join(
-#         os.path.dirname(__file__), 'mock_module', 'mock_module', '__init__.py'
-#     )
 #     spec = importlib.util.spec_from_file_location(
-#         "mock_module.module", abs_mock_path
+#         "mock_module.module", mock_path
 #     )
 #     print(spec.__dict__)
+#
 #     module = importlib.util.module_from_spec(spec)
 #     sys.modules[spec.name] = module
 #     spec.loader.exec_module(module)
+#
 #     # mock_module.EntryTest()
 #     print(type(module))
 #     # print(mock_module.__dict__)

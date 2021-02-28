@@ -9,14 +9,12 @@ import logging
 import os
 import pkgutil
 import sys
-
-# from importlib.machinery import FileFinder
 from types import ModuleType
 from typing import Any, Dict, List, Optional
 
 import pkg_resources
 
-from . import util
+from anymod import util
 
 log = logging.getLogger(__name__)
 
@@ -62,11 +60,7 @@ class PluginLoader:
                     util.add_module_path(p)
 
     def find_packages(
-        self,
-        paths: List[str] = [],
-        prefix: str = '',
-        prefix_include: str = '',
-        # prefix_exclude: str = '',
+        self, paths: List[str] = [], prefix: str = '', prefix_include: str = '',
     ) -> List[Dict[str, Any]]:
         '''Retrieve list of modules matching prefix.
 
