@@ -33,7 +33,10 @@ class PluginLoader:
     # __loader = None
 
     def __init__(
-        self, paths: list = [], module_prefix: str = '', **kwargs: str,
+        self,
+        paths: Optional[List[str]] = None,
+        module_prefix: str = '',
+        **kwargs: str,
     ):
         '''Initialize module loader plugin system.
 
@@ -54,7 +57,7 @@ class PluginLoader:
 
         self.__paths = paths
         self.__module_prefix = module_prefix
-        if self.__paths != []:
+        if self.__paths is not None:
             for p in self.__paths:
                 if p not in sys.path:
                     util.add_module_path(p)
@@ -80,14 +83,14 @@ class PluginLoader:
             Module prefix used to limit scope of search for modules.
 
         '''
-        paths = paths if paths is not None else self.__paths
+        paths = paths or self.__paths
         prefix = prefix or self.__module_prefix
         modules = [
             {'name': x.name, 'ispkg': x.ispkg, 'module_finder': x.module_finder}
             for x in pkgutil.iter_modules(path=paths, prefix=prefix)
             if (
-                x.name.startswith(prefix_include)
-                or (x.name == name or name is None)
+                x.name.startswith(prefix_include) or
+                (x.name == name or name is None)
             )
         ]
         return modules

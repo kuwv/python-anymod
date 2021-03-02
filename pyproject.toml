@@ -4,6 +4,17 @@ version = "0.1.1-dev9"
 description = "AnyMod - Dynamic module loader"
 authors = ["Jesse P. Johnson <jpj6652@gmail.com>"]
 license = "Apache-2.0"
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    # "Typing :: Typed",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+]
 
 [tool.poetry.dependencies]
 python = "^3.6"

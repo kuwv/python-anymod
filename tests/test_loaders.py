@@ -15,6 +15,11 @@ mock_path = os.path.join(os.path.dirname(__file__), 'mock_module')
 loader = PluginLoader([mock_path])
 
 
+def test_default():
+    default = PluginLoader()
+    print(default.find_packages(name='mock_module'))
+
+
 def test_paths():
     assert mock_path in sys.path
     mock_module = loader.find_packages(name='mock_module')[0]
