@@ -23,6 +23,11 @@ jobs:
     - script: inv qa.unit-test
     - script: inv qa.static-analysis
 
+    - stage: coverage
+      script:
+        - inv qa.coverage --report=xml
+        - bash <(curl -s https://codecov.io/bash)
+
     - stage: deploy
       script: poetry config pypi-token.pypi $PYPI_TOKEN
       before_deploy: poetry build
@@ -32,8 +37,3 @@ jobs:
         skip_cleanup: true
         on:
           tags: true
-
-    - stage: coverage
-      script:
-        - inv qa.coverage --report=xml
-        - bash <(curl -s https://codecov.io/bash)

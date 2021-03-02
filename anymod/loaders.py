@@ -60,9 +60,15 @@ class PluginLoader:
                     util.add_module_path(p)
 
     def find_packages(
-        self, paths: List[str] = [], prefix: str = '', prefix_include: str = '',
+        self,
+        name: str = None,
+        paths: List[str] = [],
+        prefix: str = '',
+        prefix_include: str = '',
     ) -> List[Dict[str, Any]]:
         '''Retrieve list of modules matching prefix.
+
+        List modules of a packages.
 
         Parameters
         ----------
@@ -77,11 +83,14 @@ class PluginLoader:
         paths = paths if paths != [] else self.__paths
         prefix = prefix or self.__module_prefix
         modules = [
-            {'name': name, 'ispkg': ispkg, 'finder': finder}
-            for finder, name, ispkg in pkgutil.iter_modules(
+            {'name': x.name, 'ispkg': x.ispkg, 'module_finder': x.module_finder}
+            for x in pkgutil.iter_modules(
                 path=paths, prefix=prefix
             )
-            if name.startswith(prefix_include)
+            if (
+                x.name.startswith(prefix_include) or
+                (x.name == name or name is None)
+            )
         ]
         return modules
 
@@ -120,11 +129,14 @@ class PluginLoader:
         for x in self.find_packages(paths=paths, **kwargs):
             if x['ispkg'] is False and not x['name'].startswith('_'):
                 modules.append(
-                    f"{os.path.join(x['finder'].path, x['name'])}.py"
+                    f"{os.path.join(x['module_finder'].path, x['name'])}.py"
                 )
             else:
                 modules += self.list_modules(
-                    paths=[os.path.join(x['finder'].path, x['name'])], **kwargs,
+                    paths=[
+                        os.path.join(x['module_finder'].path, x['name']),
+                    ],
+                    **kwargs,
                 )
         return modules
 
@@ -156,7 +168,7 @@ class PluginLoader:
             else:
                 modules += self.list_imports(
                     base_path=import_path,
-                    paths=[os.path.join(x['finder'].path, x['name'])],
+                    paths=[os.path.join(x['module_finder'].path, x['name'])],
                     **kwargs,
                 )
         return modules

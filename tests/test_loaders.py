@@ -18,7 +18,10 @@ loader = PluginLoader([mock_path])
 
 def test_paths():
     assert mock_path in sys.path
-    print([x for x in pkgutil.iter_modules([mock_path])])
+    print([x for x in pkgutil.iter_modules() if x.name == 'tasks'])
+    mock_module = loader.find_packages(name='mock_module')[0]
+    assert mock_module['name'] == 'mock_module'
+    assert mock_module['module_finder'].path == mock_path
 
 
 def test_entry_point(setup_mock_modules):
@@ -84,9 +87,9 @@ def test_dynamic_list_local_module():
 
     # print(module)
     # if module != []:
-    #     sys.path.append(module[0]['finder'].path)
+    #     sys.path.append(module[0]['module_finder'].path)
 
-    sys.path.append(module[0]['finder'].path)
+    sys.path.append(module[0]['module_finder'].path)
     from mock_module.module import EntryTest
 
     assert inspect.isclass(EntryTest) is True
