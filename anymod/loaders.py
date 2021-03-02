@@ -245,7 +245,7 @@ class PluginLoader:
             return None
 
     @staticmethod
-    def load_classpath(classpath: str, package: Optional[str] = None) -> str:
+    def load_classpath(classpath: str, package: Optional[str] = None) -> Any:
         '''Load class from module.
 
         Parameters
