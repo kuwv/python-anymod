@@ -89,8 +89,8 @@ class PluginLoader:
             {'name': x.name, 'ispkg': x.ispkg, 'module_finder': x.module_finder}
             for x in pkgutil.iter_modules(path=paths, prefix=prefix)
             if (
-                x.name.startswith(prefix_include) or
-                (x.name == name or name is None)
+                x.name.startswith(prefix_include)
+                or (x.name == name or name is None)
             )
         ]
         return modules
