@@ -84,12 +84,10 @@ class PluginLoader:
         prefix = prefix or self.__module_prefix
         modules = [
             {'name': x.name, 'ispkg': x.ispkg, 'module_finder': x.module_finder}
-            for x in pkgutil.iter_modules(
-                path=paths, prefix=prefix
-            )
+            for x in pkgutil.iter_modules(path=paths, prefix=prefix)
             if (
-                x.name.startswith(prefix_include) or
-                (x.name == name or name is None)
+                x.name.startswith(prefix_include)
+                or (x.name == name or name is None)
             )
         ]
         return modules
@@ -118,9 +116,7 @@ class PluginLoader:
 
     # TODO: replace with walk_packages?
     def list_modules(
-        self,
-        paths: Optional[List[str]] = None,
-        **kwargs: str,
+        self, paths: Optional[List[str]] = None, **kwargs: str,
     ) -> List[Any]:
         '''Retrieve list of modules from specified path with matching prefix.
 
@@ -139,9 +135,7 @@ class PluginLoader:
                 )
             else:
                 modules += self.list_modules(
-                    paths=[
-                        os.path.join(x['module_finder'].path, x['name']),
-                    ],
+                    paths=[os.path.join(x['module_finder'].path, x['name']),],
                     **kwargs,
                 )
         return modules

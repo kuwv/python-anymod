@@ -3,7 +3,6 @@
 
 import inspect
 import os
-# import pkgutil
 import sys
 
 import pkg_resources
@@ -23,10 +22,6 @@ def test_empty():
 
 def test_paths():
     assert mock_path in sys.path
-    # for x in pkgutil.walk_packages():
-    #     print(x)
-    # print([x for x in pkgutil.iter_modules() if x.name == 'tasks'])
-    # print(loader.find_packages())
     mock_module = loader.find_packages(name='mock_module')[0]
     assert mock_module['name'] == 'mock_module'
     assert mock_module['module_finder'].path == mock_path
