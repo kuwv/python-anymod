@@ -135,7 +135,7 @@ class PluginLoader:
                 )
             else:
                 modules += self.list_modules(
-                    paths=[os.path.join(x['module_finder'].path, x['name']),],
+                    paths=[os.path.join(x['module_finder'].path, x['name'])],
                     **kwargs,
                 )
         return modules
