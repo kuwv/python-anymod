@@ -3,7 +3,7 @@
 
 import inspect
 import os
-import pkgutil
+# import pkgutil
 import sys
 
 import pkg_resources
@@ -16,9 +16,17 @@ mock_path = os.path.join(os.path.dirname(__file__), 'mock_module')
 loader = PluginLoader([mock_path])
 
 
+def test_empty():
+    plugin = PluginLoader()
+    print(plugin.find_packages())
+
+
 def test_paths():
     assert mock_path in sys.path
-    print([x for x in pkgutil.iter_modules() if x.name == 'tasks'])
+    # for x in pkgutil.walk_packages():
+    #     print(x)
+    # print([x for x in pkgutil.iter_modules() if x.name == 'tasks'])
+    # print(loader.find_packages())
     mock_module = loader.find_packages(name='mock_module')[0]
     assert mock_module['name'] == 'mock_module'
     assert mock_module['module_finder'].path == mock_path

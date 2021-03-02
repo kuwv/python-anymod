@@ -62,7 +62,7 @@ class PluginLoader:
     def find_packages(
         self,
         name: str = None,
-        paths: List[str] = [],
+        paths: Optional[List[str]] = None,
         prefix: str = '',
         prefix_include: str = '',
     ) -> List[Dict[str, Any]]:
@@ -80,7 +80,7 @@ class PluginLoader:
             Module prefix used to limit scope of search for modules.
 
         '''
-        paths = paths if paths != [] else self.__paths
+        paths = paths if paths is not None else self.__paths
         prefix = prefix or self.__module_prefix
         modules = [
             {'name': x.name, 'ispkg': x.ispkg, 'module_finder': x.module_finder}
@@ -96,7 +96,7 @@ class PluginLoader:
 
     def load_modules(
         self,
-        paths: List[str] = [],
+        paths: Optional[List[str]] = None,
         prefix: str = '',
         prefix_include: str = '',
         # prefix_exclude: str = '',
@@ -116,7 +116,12 @@ class PluginLoader:
             )
         ]
 
-    def list_modules(self, paths: List[str] = [], **kwargs: str) -> List[Any]:
+    # TODO: replace with walk_packages?
+    def list_modules(
+        self,
+        paths: Optional[List[str]] = None,
+        **kwargs: str,
+    ) -> List[Any]:
         '''Retrieve list of modules from specified path with matching prefix.
 
         Parameters
@@ -126,8 +131,9 @@ class PluginLoader:
 
         '''
         modules = []
+        module_exclude = kwargs.get('module_exclude', '_')
         for x in self.find_packages(paths=paths, **kwargs):
-            if x['ispkg'] is False and not x['name'].startswith('_'):
+            if x['ispkg'] is False and not x['name'].startswith(module_exclude):
                 modules.append(
                     f"{os.path.join(x['module_finder'].path, x['name'])}.py"
                 )
@@ -143,7 +149,7 @@ class PluginLoader:
     def list_imports(
         self,
         base_path: Optional[str] = None,
-        paths: List[str] = [],
+        paths: Optional[List[str]] = None,
         **kwargs: str,
     ) -> List[Any]:
         '''Retrieve list of modules from specified path with matching prefix.
