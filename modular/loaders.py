@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional
 
 import pkg_resources
 
-from anymod import util
+from modular import util
 
 log = logging.getLogger(__name__)
 

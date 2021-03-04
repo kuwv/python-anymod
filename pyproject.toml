@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "anymod"
+name = "modular"
 version = "0.1.1-dev11"
 description = "AnyMod - Dynamic module loader"
 authors = ["Jesse P. Johnson <jpj6652@gmail.com>"]
@@ -40,10 +40,10 @@ safety = "^1.9.0"
 wheel = "^0.36.2"
 
 [tool.flit.metadata]
-module = "anymod"
+module = "modular"
 author = "Jesse P. Johnson"
 author-email = "jpj6652@gmail.com"
-home-page = "https://github.com/kuwv/anymod"
+home-page = "https://github.com/kuwv/python-modular"
 
 [tool.black]
 line-length = 80

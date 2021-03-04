@@ -7,7 +7,7 @@ import sys
 
 import pkg_resources
 
-from anymod import PluginLoader
+from modular import PluginLoader
 
 # config_path = os.path.dirname(os.path.realpath(__file__))
 # toml_path = os.path.join(config_path, 'settings.toml')

@@ -11,7 +11,7 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 
 __author__ = 'Jesse P. Johnson'
 __author_email__ = 'jpj6652@gmail.com'
-__title__ = 'anymod'
+__title__ = 'modular'
 __description__ = 'Inspection based parser built on argparse.'
 __version__ = '0.1.1-dev11'
 __license__ = 'Apache-2.0'

@@ -42,13 +42,13 @@ def unit_test(ctx, capture=None):
 def static_analysis(ctx):
     '''Perform static code analysis on imports.'''
     ctx.run('safety check --ignore=39462')
-    ctx.run('bandit -r anymod')
+    ctx.run('bandit -r modular')
 
 
 @task
 def coverage(ctx, report=None):
     '''Perform coverage checks for tests.'''
-    args = ['--cov=anymod']
+    args = ['--cov=modular']
     if report:
         args.append('--cov-report={}'.format(report))
     ctx.run("pytest {} ./tests/".format(' '.join(args)))

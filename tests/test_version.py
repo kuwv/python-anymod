@@ -1,5 +1,5 @@
 # type: ignore
-from anymod import __version__
+from modular import __version__
 
 
 def test_version():
